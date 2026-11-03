@@ -18,3 +18,6 @@ jobs:
 
   smoke-test:
     needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "smoke-test - Task 6 calls the deployed app here"
