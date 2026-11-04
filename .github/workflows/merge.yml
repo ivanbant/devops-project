@@ -21,7 +21,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -t ivanbant/devops-project:$GITHUB_SHA .
+            -t ivanbant/devops-project:$GITHUB_SHA \
+            -t ivanbant/devops-project:latest. 
 
       - name: Run container
         run: |
@@ -49,7 +50,8 @@ jobs:
       - name: Push image to Docker Hub
         run: |
           docker push ivanbant/devops-project:$GITHUB_SHA
-
+          docker push ivanbant/devops-project:latest
+          
       - name: Stop and remove container
         if: always()
         run: docker rm -f flask-books || true
