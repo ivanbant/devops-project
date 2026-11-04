@@ -16,11 +16,39 @@ jobs:
       - run: echo "unit-tests - Task 7 runs pytest here"
 
 
-  image-build:
-    needs: [lint, unit-tests]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "image-build - Task 4 builds the image here"
+image-build:
+  needs: [lint, unit-tests]
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: docker build -t flask-books-api .
+
+    - name: Run container
+      run: docker run -d --name flask-books -p 5000:5000 flask-books-api
+
+    - name: Health check
+      run: |
+        for i in {1..10}; do
+          if curl --fail http://localhost:5000/healthz; then
+            echo "Health check passed!"
+            exit 0
+          fi
+
+          echo "Waiting for Flask application..."
+          sleep 3
+        done
+
+        echo "Health check failed!"
+        docker logs flask-books
+        exit 1
+
+    - name: Stop and remove container
+      if: always()
+      run: docker rm -f flask-books || true
 
   integration-tests:
     needs: image-build

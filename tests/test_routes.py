@@ -2,7 +2,7 @@ import pytest
 
 from app import create_app
 from app import routes
-from book import Book
+from app.book import Book
 
 
 @pytest.fixture
